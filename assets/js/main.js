@@ -194,7 +194,7 @@
     /* pinned horizontal process */
     const pin = document.querySelector('.proc-pin');
     const track = document.querySelector('.proc-track');
-    if (pin && track && window.innerWidth > 860) {
+    if (pin && track) {
       const dist = () => track.scrollWidth - pin.clientWidth + 80;
       gsap.to(track, {
         x: () => -dist(),

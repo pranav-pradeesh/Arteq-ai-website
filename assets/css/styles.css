@@ -1113,10 +1113,7 @@ section { position: relative; padding: clamp(80px, 9vw, 140px) 0; }
   .detail { grid-template-columns: 1fr; gap: 28px; }
   .detail .d-visual, .detail.flip .d-visual { order: 2; }
   .d-visual { min-height: 280px; }
-  .proc-pin { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .proc-pin::-webkit-scrollbar { display: none; }
-  .proc-track { padding-bottom: 8px; }
-  .proc-card { flex-basis: min(78vw, 340px); min-height: 280px; }
+  .proc-card { flex-basis: min(80vw, 340px); min-height: 270px; }
   .contact-grid { grid-template-columns: 1fr; }
   .mv { grid-template-columns: 1fr; }
   .mv .m { border-right: none; border-bottom: 1px solid var(--line); }
