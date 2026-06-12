@@ -15,7 +15,7 @@
   /* ── Lenis smooth scroll, driven by GSAP ticker ────────── */
   let lenis = null;
   if (hasLenis && !reduced) {
-    lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+    lenis = new Lenis({ lerp: 0.1, smoothWheel: true, syncTouch: true, touchMultiplier: 1.3 });
     if (hasST) {
       lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add((t) => lenis.raf(t * 1000));
@@ -253,8 +253,7 @@
   /* ── three.js hero particle field ──────────────────────── */
   const heroCanvas = document.getElementById('hero-3d');
   if (heroCanvas && typeof THREE !== 'undefined' && !reduced) {
-    const isMobile = window.innerWidth < 860;
-    const N = isMobile ? 220 : 650;
+    const N = 650;
     const scene = new THREE.Scene();
     const cam = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
     cam.position.z = 14;
