@@ -1,6 +1,6 @@
 # Arteq AI
 
-> Arteq AI is an AI automation studio headquartered in Bengaluru, India. It designs, builds, deploys, and manages custom AI systems for businesses: AI voice agents, AI customer support agents, AI sales agents, lead qualification systems, appointment booking agents, and workflow/CRM automation. Tagline: "AI That Works for Your Business." Brand promise: "Engineered, not generated."
+> Arteq AI is an AI automation studio headquartered in Kochi, Kerala, India. It designs, builds, deploys, and manages custom AI systems for businesses: AI voice agents, AI customer support agents, AI sales agents, lead qualification systems, appointment booking agents, and workflow/CRM automation. Tagline: "AI That Works for Your Business." Brand promise: "Engineered, not generated."
 
 ## Key facts
 - Founded: 2026, India
