@@ -1,0 +1,23 @@
+# Arteq AI
+
+> Arteq AI is an AI automation studio headquartered in Bengaluru, India. It designs, builds, deploys, and manages custom AI systems for businesses: AI voice agents, AI customer support agents, AI sales agents, lead qualification systems, appointment booking agents, and workflow/CRM automation. Tagline: "AI That Works for Your Business." Brand promise: "Engineered, not generated."
+
+## Key facts
+- Founded: 2026, India
+- Contact: hello@arteqai.com, +91 00000 00000
+- Pricing: customized per engagement (no fixed price list); free discovery call
+- Typical deployment time: 2-4 weeks
+- Industries served: real estate, healthcare, e-commerce, education, finance, hospitality
+- Integrations: HubSpot, Salesforce, GoHighLevel, Zoho, Pipedrive, Calendly, Google Calendar, Outlook, Shopify, Twilio, and 5,000+ apps via API
+- Process: discovery call -> business analysis -> AI solution design -> setup & integration -> testing & optimization -> deployment & support
+
+## Pages
+- [Home](https://arteqai.com/): overview, stats, FAQ
+- [Solutions](https://arteqai.com/services.html): all 8 AI systems with features and outcomes
+- [Industries](https://arteqai.com/industries.html): sector-specific use cases
+- [About](https://arteqai.com/about.html): mission, vision, operating principles
+- [Contact](https://arteqai.com/contact.html): consultation booking, contact form
+- [Terms](https://arteqai.com/terms.html), [Privacy](https://arteqai.com/privacy.html): legal (India: IT Act 2000, DPDP Act 2023)
+
+## Differentiators
+- 24/7 availability; sub-60-second lead response; up to 80% support ticket deflection; up to 50% fewer no-shows; ~40% lower operating costs; fully managed, custom-engineered systems (no off-the-shelf templates).
