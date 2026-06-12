@@ -184,12 +184,17 @@ section { position: relative; padding: clamp(80px, 9vw, 140px) 0; }
   justify-content: center;
   gap: 28px;
 }
-.preloader img { width: clamp(90px, 12vw, 150px); opacity: 0; }
-.preloader .pct {
+.pre-mark { width: clamp(130px, 17vw, 200px); }
+.pre-mark .pg { stroke: rgba(255,255,255,0.16); stroke-width: 1; stroke-dasharray: 4 6; opacity: 0; }
+.pre-mark .ps { stroke: #fff; stroke-width: 2.5; stroke-linecap: square; }
+.pre-mark .pn { fill: var(--indigo-hot); }
+.pre-status {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.3em;
+  text-transform: uppercase;
   color: rgba(255,255,255,0.55);
+  min-height: 1.2em;
 }
 .no-js .preloader, .preloader.done { display: none; }
 

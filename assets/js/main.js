@@ -98,24 +98,32 @@
     });
   }
 
-  /* ── Preloader ─────────────────────────────────────────── */
+  /* ── Preloader: drafting sequence ──────────────────────── */
   const pre = document.querySelector('.preloader');
   const runIntro = () => {
     if (!pre) return introHero();
     if (!hasGSAP || reduced) { pre.classList.add('done'); return introHero(); }
-    const pct = pre.querySelector('.pct');
-    const logo = pre.querySelector('img');
-    const counter = { v: 0 };
+    const guides = pre.querySelectorAll('.pg');
+    const strokes = pre.querySelectorAll('.ps');
+    const node = pre.querySelector('.pn');
+    const status = pre.querySelector('.pre-status');
+    const say = (t) => () => { if (status) status.textContent = t; };
+    strokes.forEach((el) => {
+      const len = el.getTotalLength();
+      el.style.strokeDasharray = len;
+      el.style.strokeDashoffset = len;
+    });
     const tl = gsap.timeline({
       onComplete: () => { pre.classList.add('done'); introHero(); }
     });
-    tl.to(logo, { opacity: 1, duration: 0.5, ease: 'power2.out' })
-      .to(counter, {
-        v: 100, duration: 1.1, ease: 'power3.inOut',
-        onUpdate: () => { if (pct) pct.textContent = String(Math.round(counter.v)).padStart(3, '0') + ' %'; }
-      }, '<')
-      .to(logo, { scale: 0.92, opacity: 0, duration: 0.4, ease: 'power2.in' }, '+=0.15')
-      .to(pre, { yPercent: -100, duration: 0.7, ease: 'power4.inOut' }, '-=0.2');
+    tl.to(guides, { opacity: 1, duration: 0.35, stagger: 0.09, ease: 'power1.out' })
+      .call(say('ROUTING SIGNALS'))
+      .to(strokes, { strokeDashoffset: 0, duration: 0.85, stagger: 0.11, ease: 'power2.inOut' }, '<0.15')
+      .call(say('CALIBRATING AGENTS'))
+      .to(node, { attr: { r: 4 }, duration: 0.3, ease: 'back.out(3)' })
+      .to(strokes, { stroke: '#4640e0', duration: 0.3 }, '<')
+      .call(say('SYSTEM ONLINE'))
+      .to(pre, { yPercent: -100, duration: 0.7, ease: 'power4.inOut', delay: 0.3 });
   };
 
   /* ── Hero intro ────────────────────────────────────────── */
@@ -250,62 +258,121 @@
     });
   });
 
-  /* ── three.js hero particle field ──────────────────────── */
+  /* ── Hero: signal network — agents routing live traffic ── */
   const heroCanvas = document.getElementById('hero-3d');
-  if (heroCanvas && typeof THREE !== 'undefined' && !reduced) {
-    const N = 650;
-    const scene = new THREE.Scene();
-    const cam = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
-    cam.position.z = 14;
-    const renderer = new THREE.WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  if (heroCanvas && !reduced) {
+    const c2 = heroCanvas.getContext('2d');
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0, nodes = [], edges = [], adj = [], pulses = [];
 
-    const geo = new THREE.BufferGeometry();
-    const pos = new Float32Array(N * 3);
-    const seed = new Float32Array(N);
-    for (let i = 0; i < N; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 34;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
-      seed[i] = Math.random() * Math.PI * 2;
-    }
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const mat = new THREE.PointsMaterial({ color: 0x4640e0, size: 0.07, transparent: true, opacity: 0.7 });
-    const pts = new THREE.Points(geo, mat);
-    scene.add(pts);
-
-    let mx = 0, my = 0, visible = true, t = 0;
-    window.addEventListener('mousemove', (e) => {
-      mx = (e.clientX / window.innerWidth - 0.5);
-      my = (e.clientY / window.innerHeight - 0.5);
-    }, { passive: true });
-
-    const size = () => {
+    const build = () => {
       const r = heroCanvas.parentElement.getBoundingClientRect();
-      renderer.setSize(r.width, r.height, false);
-      cam.aspect = r.width / r.height;
-      cam.updateProjectionMatrix();
+      W = r.width; H = r.height;
+      heroCanvas.width = W * DPR; heroCanvas.height = H * DPR;
+      c2.setTransform(DPR, 0, 0, DPR, 0, 0);
+      nodes = []; edges = []; pulses = [];
+      const step = Math.max(105, Math.min(170, W / 9));
+      const cols = Math.ceil(W / step) + 1;
+      const rows = Math.ceil(H / step) + 1;
+      for (let gy = 0; gy < rows; gy++) {
+        for (let gx = 0; gx < cols; gx++) {
+          nodes.push({
+            x: gx * step + (Math.random() - 0.5) * step * 0.55,
+            y: gy * step + (Math.random() - 0.5) * step * 0.55,
+            hub: Math.random() < 0.12
+          });
+        }
+      }
+      adj = nodes.map(() => []);
+      const link = (a, b) => { adj[a].push(edges.length); adj[b].push(edges.length); edges.push([a, b]); };
+      for (let gy = 0; gy < rows; gy++) {
+        for (let gx = 0; gx < cols; gx++) {
+          const i = gy * cols + gx;
+          if (gx < cols - 1 && Math.random() < 0.82) link(i, i + 1);
+          if (gy < rows - 1 && Math.random() < 0.82) link(i, i + cols);
+          if (gx < cols - 1 && gy < rows - 1 && Math.random() < 0.16) link(i, i + cols + 1);
+        }
+      }
+      const P = Math.max(5, Math.min(14, Math.round(W / 110)));
+      for (let k = 0; k < P && edges.length; k++) {
+        const e = edges[Math.floor(Math.random() * edges.length)];
+        pulses.push({ a: e[0], b: e[1], t: Math.random(), s: 0.25 + Math.random() * 0.3 });
+      }
     };
-    size();
-    window.addEventListener('resize', size);
+    build();
+    window.addEventListener('resize', build);
 
+    let mx = 0, my = 0, visible = true, last = 0;
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX / window.innerWidth - 0.5;
+      my = e.clientY / window.innerHeight - 0.5;
+    }, { passive: true });
     new IntersectionObserver((en) => { visible = en[0].isIntersecting; }, { threshold: 0 })
       .observe(heroCanvas.parentElement);
 
-    const p = geo.attributes.position.array;
-    const tick = () => {
-      requestAnimationFrame(tick);
-      if (!visible) return;
-      t += 0.004;
-      for (let i = 0; i < N; i++) {
-        p[i * 3 + 1] += Math.sin(t * 2 + seed[i]) * 0.0035;
-      }
-      geo.attributes.position.needsUpdate = true;
-      pts.rotation.y += (mx * 0.25 - pts.rotation.y) * 0.04;
-      pts.rotation.x += (my * 0.18 - pts.rotation.x) * 0.04;
-      renderer.render(scene, cam);
+    const hop = (p) => {
+      const opts = adj[p.b].filter(ei => edges[ei][0] !== p.a && edges[ei][1] !== p.a);
+      const pool = opts.length ? opts : adj[p.b];
+      if (!pool.length) { const e = edges[Math.floor(Math.random() * edges.length)]; p.a = e[0]; p.b = e[1]; p.t = 0; return; }
+      const e = edges[pool[Math.floor(Math.random() * pool.length)]];
+      const from = p.b;
+      p.b = (e[0] === from) ? e[1] : e[0];
+      p.a = from;
+      p.t = 0;
     };
-    tick();
+
+    const tick = (now) => {
+      requestAnimationFrame(tick);
+      if (!visible || !edges.length) return;
+      const dt = Math.min((now - last) / 1000 || 0.016, 0.05);
+      last = now;
+      c2.clearRect(0, 0, W, H);
+      c2.save();
+      c2.translate(mx * -18, my * -12);
+
+      /* wiring */
+      c2.lineWidth = 1;
+      c2.strokeStyle = 'rgba(43, 41, 170, 0.12)';
+      c2.beginPath();
+      for (const [a, b] of edges) {
+        c2.moveTo(nodes[a].x, nodes[a].y);
+        c2.lineTo(nodes[b].x, nodes[b].y);
+      }
+      c2.stroke();
+
+      /* nodes: endpoints + hub agents */
+      for (const n of nodes) {
+        if (n.hub) {
+          c2.strokeStyle = 'rgba(70, 64, 224, 0.55)';
+          c2.strokeRect(n.x - 3.5, n.y - 3.5, 7, 7);
+        } else {
+          c2.fillStyle = 'rgba(43, 41, 170, 0.32)';
+          c2.fillRect(n.x - 1.5, n.y - 1.5, 3, 3);
+        }
+      }
+
+      /* pulses: requests routed through the network */
+      for (const p of pulses) {
+        p.t += p.s * dt;
+        if (p.t >= 1) hop(p);
+        const A = nodes[p.a], B = nodes[p.b];
+        const x = A.x + (B.x - A.x) * p.t;
+        const y = A.y + (B.y - A.y) * p.t;
+        const t0 = Math.max(0, p.t - 0.18);
+        c2.strokeStyle = 'rgba(70, 64, 224, 0.45)';
+        c2.lineWidth = 1.5;
+        c2.beginPath();
+        c2.moveTo(A.x + (B.x - A.x) * t0, A.y + (B.y - A.y) * t0);
+        c2.lineTo(x, y);
+        c2.stroke();
+        c2.fillStyle = '#4640e0';
+        c2.beginPath();
+        c2.arc(x, y, 2.2, 0, Math.PI * 2);
+        c2.fill();
+      }
+      c2.restore();
+    };
+    requestAnimationFrame(tick);
   }
 
   /* ── Magnetic buttons ──────────────────────────────────── */
